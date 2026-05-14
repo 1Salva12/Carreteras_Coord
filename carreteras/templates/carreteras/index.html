@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscador UCS - Opciones</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #a6a7b3; padding: 40px; margin: 0; }
+        .box { max-width: 780px; margin: auto; background: white; padding: 30px; border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.16); }
+        h2 { text-align: center; color: #333; margin-bottom: 18px; }
+        .section { margin-bottom: 28px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-weight: bold; color: #444; }
+        input, select, button { width: 100%; padding: 12px 14px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; }
+        input:focus, select:focus { outline: none; border-color: #2211da; }
+        button { background-color: #2211da; color: white; border: none; cursor: pointer; transition: background 0.2s ease; }
+        button:hover { background-color: #0f0bb2; }
+        .grid { display: grid; gap: 24px; }
+        .res { margin-top: 18px; padding: 18px; background-color: #d1f2eb; border-left: 5px solid #16a085; color: #133f33; }
+        .message { margin-top: 18px; padding: 14px; border-radius: 8px; }
+        .message.error { background: #ffd8d8; color: #8c1717; }
+        .message.info { background: #eaf4ff; color: #153d6f; }
+        .message.success { background: #def7e0; color: #165b26; }
+        .small-list { list-style: none; padding-left: 0; }
+        .small-list li { padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+        .small-list li:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>Buscador UCS - Opciones</h2>
+
+        <div class="grid">
+            <div class="section">
+                <h3>Calcular ruta</h3>
+                <form method="get">
+                    <div class="form-group">
+                        <label>Selecciona Origen</label>
+                        <select name="origen">
+                            <option value="">-- Elige ciudad --</option>
+                            {% for c in ciudades %}
+                                <option value="{{ c.nombre }}" {% if c.nombre == origen_sel %}selected{% endif %}>{{ c.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Selecciona Destino</label>
+                        <select name="destino">
+                            <option value="">-- Elige ciudad --</option>
+                            {% for c in ciudades %}
+                                <option value="{{ c.nombre }}" {% if c.nombre == destino_sel %}selected{% endif %}>{{ c.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit">Calcular Ruta</button>
+                </form>
+            </div>
+
+            <div class="section">
+                <h3>Agregar ciudad</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="add_city" value="1">
+                    <p style="font-size: 0.95rem; color: #555; margin-bottom: 14px;">Ejemplo: <code>MEXICALI</code> con coordenadas <code>20.139234509912956, -98.6735602490864</code>.</p>
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        {{ ciudad_form.nombre }}
+                    </div>
+                    <div class="form-group">
+                        <label>Coordenadas (latitud, longitud)</label>
+                        {{ ciudad_form.coordenadas }}
+                    </div>
+                    <button type="submit">Guardar ciudad</button>
+                </form>
+            </div>
+        </div>
+
+        {% if error %}
+            <div class="message error">{{ error }}</div>
+        {% endif %}
+
+        {% if resultado %}
+            <div class="res">
+                <strong>Camino Óptimo:</strong><br>
+                {{ resultado|join:' ➔ ' }}<br><br>
+                <strong>Costo:</strong> {{ costo }}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
