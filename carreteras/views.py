@@ -106,8 +106,10 @@ def index(request):
                 error = 'No se encontró una ruta entre las ciudades seleccionadas.'
 
     ciudades = Ciudad.objects.order_by('nombre')
+    rutas = Ruta.objects.select_related('origen', 'destino').order_by('origen__nombre', 'destino__nombre')
     return render(request, 'carreteras/index.html', {
         'ciudades': ciudades,
+        'rutas': rutas,
         'ciudad_form': ciudad_form,
         'resultado': resultado,
         'costo': costo,
