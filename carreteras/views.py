@@ -82,6 +82,15 @@ def index(request):
                     Ruta.objects.create(origen=ciudad, destino=otra, distancia=distancia)
             return redirect(reverse('carreteras:index'))
 
+    if request.method == 'POST' and 'delete_city' in request.POST:
+        ciudad_id = request.POST.get('delete_city')
+        try:
+            ciudad = Ciudad.objects.get(id=ciudad_id)
+            ciudad.delete()
+        except Ciudad.DoesNotExist:
+            pass
+        return redirect(reverse('carreteras:index'))
+
     if request.method == 'GET' and 'origen' in request.GET and 'destino' in request.GET:
         origen_sel = request.GET.get('origen')
         destino_sel = request.GET.get('destino')
